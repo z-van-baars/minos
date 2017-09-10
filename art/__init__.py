@@ -27,3 +27,11 @@ house_image_1 = pygame.image.load("art/constructs/buildings/house_1.png").conver
 house_image_1.set_colorkey(utilities.colors.key)
 house_image_1 = house_image_1.convert_alpha()
 
+lumber_camp_image_1 = pygame.image.load("art/constructs/buildings/lumber_camp_1.png").convert()
+lumber_camp_image_1.set_colorkey(utilities.colors.key)
+lumber_camp_image_1 = lumber_camp_image_1.convert_alpha()
+
+palace_image_1 = pygame.image.load("art/constructs/buildings/palace_1.png").convert()
+palace_image_1.set_colorkey(utilities.colors.key)
+palace_image_1 = lumber_camp_image_1.convert_alpha()
+

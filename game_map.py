@@ -35,6 +35,7 @@ class Map(object):
         self.game_tile_rows = []
         self.constructs = []
         self.terrain = []
+        self.buildings = []
         self.displayshift_x = 0
         self.displayshift_y = 0
 
@@ -74,20 +75,19 @@ class Map(object):
         for terrain_object in self.terrain:
             terrain_image = terrain_object.sprite.image
             x, y = utilities.get_screen_coords(terrain_object.tile_x, terrain_object.tile_y)
-            print("blitting tree at: {0} {1}".format(terrain_object.tile_x, terrain_object.tile_y))
             self.terrain_display_layer.image.blit(terrain_image, [x + background_x_middle + (tile_width / 2), y - 25])
         self.terrain_display_layer.image.set_colorkey(colors.key)
         self.terrain_display_layer.image = self.terrain_display_layer.image.convert_alpha()
 
-    def old_paint_background_tiles(self, game_tile_rows):
-        self.tile_display_layer = DisplayLayer(self.width, self.height)
-        for y_row in game_tile_rows:
-            for tile in y_row:
-                new_tile_image = art.grass_tile_image_1
-                x, y = utilities.get_screen_coords(tile.column, tile.row)
-                self.tile_display_layer.image.blit(new_tile_image, [x, y])
-        self.tile_display_layer.image.set_colorkey(colors.key)
-        self.tile_display_layer.image = self.tile_display_layer.image.convert_alpha()
+    def paint_buildings(self):
+        self.building_display_layer = DisplayLayer(self.width, self.height)
+        background_x_middle = (self.building_display_layer.image.get_width() / 2)
+        for building_object in self.buildings:
+            building_image = building_object.sprite.image
+            x, y = utilities.get_screen_coords(building_object.tile_x, building_object.tile_y)
+            self.building_display_layer.image.blit(building_image, [x + background_x_middle + (tile_width / 2), y - 25])
+        self.building_display_layer.image.set_colorkey(colors.key)
+        self.building_display_layer.image = self.building_display_layer.image.convert_alpha()
 
     def paint_background_tiles(self, game_tile_rows):
         tile_width = 40
@@ -108,6 +108,7 @@ class Map(object):
         self.generate_resources(self.width, self.height)
         self.paint_background_tiles(self.game_tile_rows)
         self.paint_resources()
+        self.paint_buildings()
 
     def world_scroll(self, shift_x, shift_y, screen_width, screen_height):
         background_width = self.tile_display_layer.image.get_width()

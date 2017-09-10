@@ -28,6 +28,26 @@ class House(Construct):
         self.sprite.image = self.sprite.image.convert_alpha()
 
 
+class LumberCamp(Construct):
+    def __init__(self, x, y):
+        super().__init__(x, y)
+        self.set_image()
+
+    def set_image(self):
+        self.sprite.image = art.lumber_camp_image_1
+        self.sprite.image = self.sprite.image.convert_alpha()
+
+
+class Palace(Construct):
+    def __init__(self, x, y):
+        super().__init__(x, y)
+        self.set_image()
+
+    def set_image(self):
+        self.sprite.image = art.palace_image_1
+        self.sprite.image = self.sprite.image.convert_alpha()
+
+
 class Tree(Construct):
     def __init__(self, x, y):
         super().__init__(x, y)
