@@ -129,10 +129,10 @@ def get_nearby_tiles(current_map, center, radius):
     y = center[1]
     for tile_y in range((y - radius), (y + radius)):
         for tile_x in range((x - radius), (x + radius)):
-            if within_map(tile_x, tile_y, current_map):
-                distance_from_center = math.floor(distance(tile_x, tile_y, center[0], center[1]))
-                if distance_from_center <= radius:
-                    nearby_tiles.append(current_map[tile_y][tile_x])
+            if within_map(tile_x, tile_y, current_map.game_tile_rows):
+                distance_from_center = math.ceil(distance(tile_x, tile_y, center[0], center[1]))
+                if distance_from_center < radius:
+                    nearby_tiles.append(current_map.game_tile_rows[tile_y][tile_x])
     return nearby_tiles
 
 

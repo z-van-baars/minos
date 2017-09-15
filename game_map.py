@@ -7,6 +7,7 @@ import art
 import math
 import random
 import construct
+import queue
 
 
 tile_width = 40
@@ -48,24 +49,23 @@ class Map(object):
             self.game_tile_rows.append(this_row)
 
     def generate_resources(self, width, height):
-        number_of_forests = 1
-        # number_of_forests = math.floor(math.sqrt(width * height))
+        # number_of_forests = 1
+        number_of_forests = math.floor(math.sqrt(width * height))
         # number_of_forests = random.randint(1, 2 * math.floor(math.sqrt(width * height)))
-        print("Forests: {0}".format(number_of_forests))
         for ii in range(number_of_forests):
             new_forest_center = False
             while not new_forest_center:
                 new_forest_center = utilities.get_random_coordinates(0, width - 1, 0, height - 1)
                 if self.game_tile_rows[new_forest_center[1]][new_forest_center[0]].is_occupied():
                     new_forest_center = False
-            forest_tiles = utilities.get_nearby_tiles(self.game_tile_rows, new_forest_center, 4)
-            forest_size = random.randint(5, 10)
+            forest_tiles = utilities.get_nearby_tiles(self, new_forest_center, math.floor(math.sqrt(number_of_forests) / 2))
+            forest_size = random.randint(math.floor(math.sqrt(number_of_forests)), math.floor(math.sqrt(number_of_forests) * 2))
             for jj in range(forest_size):
                 new_tree_xy = random.choice(forest_tiles)
                 if self.game_tile_rows[new_tree_xy.row][new_tree_xy.column].is_occupied():
                     new_tree_xy = False
                 if new_tree_xy:
-                    new_tree = construct.Tree(new_tree_xy.column, new_tree_xy.row)
+                    new_tree = construct.Tree(new_tree_xy.column, new_tree_xy.row, self)
                     self.terrain.append(new_tree)
                     self.game_tile_rows[new_tree_xy.row][new_tree_xy.column].construct = new_tree
 
@@ -82,9 +82,12 @@ class Map(object):
     def paint_buildings(self):
         self.building_display_layer = DisplayLayer(self.width, self.height)
         background_x_middle = (self.building_display_layer.image.get_width() / 2)
+        buildings_to_draw = queue.PriorityQueue()
         for building_object in self.buildings:
-            building_image = building_object.sprite.image
             x, y = utilities.get_screen_coords(building_object.tile_x, building_object.tile_y)
+            buildings_to_draw.put((y, x, building_object.sprite.image))
+        while not buildings_to_draw.empty():
+            y, x, building_image = buildings_to_draw.get()
             self.building_display_layer.image.blit(building_image, [x + background_x_middle + (tile_width / 2), y - 25])
         self.building_display_layer.image.set_colorkey(colors.key)
         self.building_display_layer.image = self.building_display_layer.image.convert_alpha()
@@ -98,8 +101,6 @@ class Map(object):
                 new_tile_image = art.grass_tile_image_1
                 x, y = utilities.get_screen_coords(tile.column, tile.row)
                 self.tile_display_layer.image.blit(new_tile_image, [x + background_x_middle + (tile_width / 2), y])
-                print(tile.column, tile.row)
-                print(x, y)
         self.tile_display_layer.image.set_colorkey(colors.key)
         self.tile_display_layer.image = self.tile_display_layer.image.convert_alpha()
 

@@ -14,6 +14,10 @@ grass_tile_image_1 = pygame.image.load("art/tiles/grass_1.png").convert()
 grass_tile_image_1.set_colorkey(utilities.colors.key)
 grass_tile_image_1 = grass_tile_image_1.convert_alpha()
 
+radius_tile_image_1 = pygame.image.load("art/tiles/radius_preview.png").convert()
+radius_tile_image_1.set_colorkey(utilities.colors.key)
+radius_tile_image_1 = radius_tile_image_1.convert_alpha()
+
 
 
 # terrain
@@ -33,5 +37,11 @@ lumber_camp_image_1 = lumber_camp_image_1.convert_alpha()
 
 palace_image_1 = pygame.image.load("art/constructs/buildings/palace_1.png").convert()
 palace_image_1.set_colorkey(utilities.colors.key)
-palace_image_1 = lumber_camp_image_1.convert_alpha()
+palace_image_1 = palace_image_1.convert_alpha()
 
+farm_image_1 = pygame.image.load("art/constructs/buildings/farm_1.png").convert()
+farm_image_2 = pygame.image.load("art/constructs/buildings/farm_2.png").convert()
+farm_image_1.set_colorkey(utilities.colors.key)
+farm_image_2.set_colorkey(utilities.colors.key)
+farm_image_1 = farm_image_1.convert_alpha()
+farm_image_2 = farm_image_2.convert_alpha()
