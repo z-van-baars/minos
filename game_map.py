@@ -69,66 +69,31 @@ class Map(object):
             new_mine_tiles.append(mine_choice)
         return new_mine_tiles
 
-    def generate_stone(self, width, height):
-        number_of_stone_mines = math.floor(math.sqrt(width * height) / 2)
-        print(number_of_stone_mines)
-        stone_seeds = []
-        for ii in range(number_of_stone_mines):
-            new_stone_seed = False
-            while not new_stone_seed:
-                new_stone_seed = utilities.get_random_coordinates(0, width - 1, 0, height - 1)
-                for jj in stone_seeds:
-                    if utilities.distance(new_stone_seed[0], new_stone_seed[1], jj[0], jj[1]) < 10:
-                        new_stone_seed = False
+    def generate_mines(self, width, height, mine_type, number_of_mines):
+        mine_seeds = []
+        for ii in range(number_of_mines):
+            new_mine_seed = False
+            while not new_mine_seed:
+                new_mine_seed = utilities.get_random_coordinates(0, width - 1, 0, height - 1)
+                for jj in mine_seeds:
+                    if utilities.distance(new_mine_seed[0], new_mine_seed[1], jj[0], jj[1]) < 10:
+                        new_mine_seed = False
                         break
-                if new_stone_seed and self.game_tile_rows[new_stone_seed[1]][new_stone_seed[0]].is_occupied():
-                    new_stone_seed = False
+                if new_mine_seed and self.game_tile_rows[new_mine_seed[1]][new_mine_seed[0]].is_occupied():
+                    new_mine_seed = False
 
-            stone_seeds.append(new_stone_seed)
-        print(len(stone_seeds))
+            mine_seeds.append(new_mine_seed)
+        mine_tiles = []
+        for kk in mine_seeds:
+            mine_tiles += self.spread_contiguous_resource(kk, mine_tiles)
 
-        stone_tiles = []
-        for kk in stone_seeds:
-            stone_tiles += self.spread_contiguous_resource(kk, stone_tiles)
-
-        print(len(stone_tiles))
-        for stone_tile in stone_tiles:
-            new_stone_pile = construct.StonePile(stone_tile.column, stone_tile.row, self)
-            self.game_tile_rows[stone_tile.row][stone_tile.column].construct = new_stone_pile
-            self.terrain.append(new_stone_pile)
-
-    def generate_copper(self, width, height):
-        number_of_copper_mines = math.floor(math.sqrt((math.sqrt(width * height))))
-        print(number_of_copper_mines)
-        copper_seeds = []
-        for ii in range(number_of_copper_mines):
-            new_copper_seed = False
-            while not new_copper_seed:
-                new_copper_seed = utilities.get_random_coordinates(0, width - 1, 0, height - 1)
-                for jj in copper_seeds:
-                    if utilities.distance(new_copper_seed[0], new_copper_seed[1], jj[0], jj[1]) < 10:
-                        new_copper_seed = False
-                        break
-                if new_copper_seed and self.game_tile_rows[new_copper_seed[1]][new_copper_seed[0]].is_occupied():
-                    new_copper_seed = False
-
-            copper_seeds.append(new_copper_seed)
-        print(len(copper_seeds))
-
-        copper_tiles = []
-        for kk in copper_seeds:
-            copper_tiles += self.spread_contiguous_resource(kk, copper_tiles)
-
-        print(len(copper_tiles))
-        for copper_tile in copper_tiles:
-            new_copper_pile = construct.CopperPile(copper_tile.column, copper_tile.row, self)
-            self.game_tile_rows[copper_tile.row][copper_tile.column].construct = new_copper_pile
-            self.terrain.append(new_copper_pile)
+        for tile in mine_tiles:
+            new_pile = mine_type(tile.column, tile.row, self)
+            self.game_tile_rows[tile.row][tile.column].construct = new_pile
+            self.terrain.append(new_pile)
 
     def generate_forests(self, width, height):
-        # number_of_forests = 1
         number_of_forests = math.floor(math.sqrt(width * height))
-        # number_of_forests = random.randint(1, 2 * math.floor(math.sqrt(width * height)))
         for ii in range(number_of_forests):
             new_forest_center = False
             while not new_forest_center:
@@ -147,8 +112,10 @@ class Map(object):
                     self.game_tile_rows[new_tree_xy.row][new_tree_xy.column].construct = new_tree
 
     def generate_resources(self, width, height):
-        self.generate_copper(width, height)
-        self.generate_stone(width, height)
+        number_of_copper_mines = math.floor(math.sqrt((math.sqrt(width * height))))
+        self.generate_mines(width, height, construct.CopperPile, number_of_copper_mines)
+        number_of_stone_mines = math.floor(math.sqrt(width * height) / 2)
+        self.generate_mines(width, height, construct.StonePile, number_of_stone_mines)
         self.generate_forests(width, height)
 
     def paint_resources(self):

@@ -46,9 +46,12 @@ farm_image_2.set_colorkey(utilities.colors.key)
 farm_image_1 = farm_image_1.convert_alpha()
 farm_image_2 = farm_image_2.convert_alpha()
 
-house_image_1 = pygame.image.load("art/constructs/buildings/house_1.png").convert()
-house_image_1.set_colorkey(utilities.colors.key)
-house_image_1 = house_image_1.convert_alpha()
+house_images = []
+for ii in range(1, 8):
+    house_image = pygame.image.load("art/constructs/buildings/house_{0}.png".format(ii)).convert()
+    house_image.set_colorkey(utilities.colors.key)
+    house_image = house_image.convert_alpha()
+    house_images.append(house_image)
 
 lumber_camp_image_1 = pygame.image.load("art/constructs/buildings/lumber_camp_1.png").convert()
 lumber_camp_image_1.set_colorkey(utilities.colors.key)

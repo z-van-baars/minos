@@ -66,8 +66,18 @@ class GameState(object):
         for each_key, each_value in self.last_step_produced_resources.items():
             self.stats.produced_resources[each_key].append(each_value)
 
-    def unit_processing(self):
+    def unit_production(self, active_map, last_step_consumed_resources, last_step_produced_resources):
+        for building in active_map.buildings:
+            resources_consumed, resources_produced = building.produce(active_map, self.resources)
+            for key, value in resources_consumed.items():
+                last_step_consumed_resources[key] += value
+                self.resources[key] -= value
+            for key, value in resources_produced.items():
+                last_step_produced_resources[key] += value
+                self.resources[key] += value
+        return last_step_consumed_resources, last_step_produced_resources
 
+    def cull_terrain_objects(self, active_map):
         def check_resources(terrain_object):
             if all([terrain_object.raw_resources["Wood"] == 0,
                     terrain_object.raw_resources["Stone"] == 0,
@@ -76,6 +86,16 @@ class GameState(object):
                     terrain_object.raw_resources["Labor"] == 0]):
                 return False
             return True
+
+        terrain_removal_flag = False
+        for terrain in active_map.terrain:
+            if not check_resources(terrain):
+                terrain_removal_flag = True
+                active_map.terrain.remove(terrain)
+                active_map.game_tile_rows[terrain.tile_y][terrain.tile_x].construct = None
+        return terrain_removal_flag
+
+    def unit_processing(self):
         last_step_consumed_resources = {"Wood": 0,
                                         "Food": 0,
                                         "Stone": 0,
@@ -92,23 +112,12 @@ class GameState(object):
             return
         self.timer = 0
         active_map = self.active_map
-        for building in active_map.buildings:
-            resources_consumed, resources_produced = building.produce(active_map, self.resources)
-            for key, value in resources_consumed.items():
-                last_step_consumed_resources[key] += value
-                self.resources[key] -= value
-            for key, value in resources_produced.items():
-                last_step_produced_resources[key] += value
-                self.resources[key] += value
 
-        terrain_removal_flag = False
-        for terrain in active_map.terrain:
-            if not check_resources(terrain):
-                terrain_removal_flag = True
-                active_map.terrain.remove(terrain)
-                active_map.game_tile_rows[terrain.tile_y][terrain.tile_x].construct = None
+        self.unit_production(active_map, last_step_consumed_resources, last_step_produced_resources)
         self.last_step_consumed_resources = last_step_consumed_resources
         self.last_step_produced_resources = last_step_produced_resources
+
+        terrain_removal_flag = self.cull_terrain_objects(active_map)
         if terrain_removal_flag:
             active_map.paint_resources()
         self.log_statistics()

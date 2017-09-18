@@ -45,7 +45,7 @@ class House(Construct):
         self.set_image()
 
     def set_image(self):
-        self.sprite.image = art.house_image_1
+        self.sprite.image = random.choice(art.house_images)
         self.sprite.image = self.sprite.image.convert_alpha()
 
     def produce(self, active_map, resources):
