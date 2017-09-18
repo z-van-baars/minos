@@ -21,17 +21,19 @@ class Construct(object):
                               "Stone": 0,
                               "Copper": 0,
                               "Labor": 0}
+        self.radius_bonus = 0
         self.set_orbit(active_map, x, y)
         self.base_consumption_modifier = 1.0
         self.consumption_modifier = 1.0
         self.base_production_modifier = 1.0
         self.production_modifier = 1.0
+        self.active = True
 
     def __lt__(self, other):
         return False
 
     def set_orbit(self, active_map, x, y):
-        self.orbit = utilities.get_nearby_tiles(active_map, (x, y), self.radius)
+        self.orbit = utilities.get_nearby_tiles(active_map, (x, y), self.radius + self.radius_bonus)
 
     def reset_modifiers(self):
         self.consumption_modifier = self.base_consumption_modifier
@@ -64,7 +66,7 @@ class House(Construct):
     def produce(self, active_map, resources):
         consumed_resources = {}
         produced_resources = {}
-        if resources["Food"] < 5:
+        if resources["Food"] < 5 * self.consumption_modifier or not self.active:
             return consumed_resources, produced_resources
         consumed_resources["Food"] = 5 * self.consumption_modifier
         produced_resources["Labor"] = 1 * self.production_modifier
@@ -89,7 +91,7 @@ class Farm(Construct):
     def produce(self, active_map, resources):
         consumed_resources = {}
         produced_resources = {}
-        if resources["Labor"] < 1 or resources["Wood"] < 1:
+        if resources["Labor"] < 1 * self.consumption_modifier or not self.active:
             return consumed_resources, produced_resources
         consumed_resources["Labor"] = 1 * self.consumption_modifier
         produced_resources["Food"] = 6 * self.production_modifier
@@ -113,7 +115,7 @@ class LumberCamp(Construct):
     def produce(self, active_map, resources):
         consumed_resources = {}
         produced_resources = {}
-        if resources["Labor"] < 1:
+        if resources["Labor"] < 1 * self.consumption_modifier or not self.active:
             return consumed_resources, produced_resources
         total_extracted_wood = 0
         for tile in self.orbit:
@@ -145,7 +147,7 @@ class StoneMine(Construct):
     def produce(self, active_map, resources):
         consumed_resources = {}
         produced_resources = {}
-        if resources["Labor"] < 1 * self.consumption_modifier:
+        if resources["Labor"] < 1 * self.consumption_modifier or not self.active:
             return consumed_resources, produced_resources
         consumed_resources["Labor"] = 0
         produced_resources["Stone"] = 0
@@ -165,10 +167,10 @@ class StoneMine(Construct):
 
 class Temple(Construct):
     cost = {"Wood": 200,
-            "Stone": 0,
+            "Stone": 100,
             "Labor": 50}
     display_name = "Temple"
-    radius = 8
+    radius = 6
 
     def __init__(self, x, y, active_map):
         super().__init__(x, y, active_map)
@@ -181,7 +183,7 @@ class Temple(Construct):
     def produce(self, active_map, resources):
         consumed_resources = {}
         produced_resources = {}
-        if resources["Labor"] < 3 * self.consumption_modifier:
+        if resources["Labor"] < 3 * self.consumption_modifier or not self.active:
             return consumed_resources, produced_resources
         consumed_resources["Labor"] = 3 * self.consumption_modifier
         self.reset_modifiers()
@@ -198,7 +200,7 @@ class Palace(Construct):
             "Stone": 5000,
             "Labor": 1000}
     display_name = "Palace"
-    radius = 6
+    radius = 4
 
     def __init__(self, x, y, active_map):
         super().__init__(x, y, active_map)

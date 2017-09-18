@@ -52,8 +52,15 @@ def do_nothing(game_state):
     pass
 
 
+def a_key(game_state):
+    game_state.build_mode = False
+    game_state.remove = False
+    game_state.activation_mode = not game_state.activation_mode
+
+
 def b_key(game_state):
     game_state.remove = False
+    game_state.activation_mode = False
     game_state.build_candidate = "None"
     game_state.build_candidate = "House"
     game_state.build_menu = not game_state.build_menu
@@ -63,6 +70,7 @@ def d_key(game_state):
     if not game_state.control:
         return
     game_state.remove = False
+    game_state.activation_mode = False
     game_state.build_menu = False
     game_state.buld_candidate = "House"
     game_state.selected_construct = None
@@ -147,6 +155,7 @@ key_functions = {pygame.K_UP: up_key,
                  pygame.K_RIGHT: right_key,
                  pygame.K_LCTRL: control_key,
                  pygame.K_RCTRL: control_key,
+                 pygame.K_a: a_key,
                  pygame.K_b: b_key,
                  pygame.K_d: d_key,
                  pygame.K_f: f_key,
@@ -171,7 +180,9 @@ def input_processing(game_state, selected_tile, background_left, background_top,
                 build(game_state, selected_tile, background_left, background_top, background_right, background_bottom, mouse_pos)
             if game_state.remove:
                 remove(game_state, selected_tile)
-            elif not game_state.build_menu and not game_state.remove:
+            if game_state.activation_mode and selected_tile.construct:
+                selected_tile.construct.active = not selected_tile.construct.active
+            elif not game_state.build_menu and not game_state.remove and not game_state.activation_mode:
                 game_state.selected_construct = selected_tile.construct
         elif event.type == pygame.KEYDOWN:
             key_functions.get(event.key, do_nothing)(game_state)

@@ -31,18 +31,23 @@ def print_stats(game_state, selected_construct):
     game_state.screen.blit(stone_stamp, [10, 32])
     game_state.screen.blit(labor_stamp, [10, 43])
     if selected_construct:
-        selected_construct_stamp = tiny_font.render("{0}".format(selected_construct.display_name), True, utilities.colors.white)
+        selected_construct_stamp = small_font.render("{0}".format(selected_construct.display_name), True, utilities.colors.white)
         center_offset = selected_construct_stamp.get_width() / 2
-        selected_construct_display_start = game_state.screen.get_width() / 2 - center_offset
-        game_state.screen.blit(selected_construct_stamp, [selected_construct_display_start, 10])
-        raw_wood_stamp = tiny_font.render("Wood: {0}".format(str(selected_construct.raw_resources["Wood"])), True, utilities.colors.white)
-        raw_food_stamp = tiny_font.render("Food: {0}".format(str(selected_construct.raw_resources["Food"])), True, utilities.colors.white)
-        raw_stone_stamp = tiny_font.render("Stone: {0}".format(str(selected_construct.raw_resources["Stone"])), True, utilities.colors.white)
-        raw_labor_stamp = tiny_font.render("Labor: {0}".format(str(selected_construct.raw_resources["Labor"])), True, utilities.colors.white)
-        game_state.screen.blit(raw_wood_stamp, [selected_construct_display_start + 4, 21])
-        game_state.screen.blit(raw_food_stamp, [selected_construct_display_start + 4, 32])
-        game_state.screen.blit(raw_stone_stamp, [selected_construct_display_start + 4, 43])
-        game_state.screen.blit(raw_labor_stamp, [selected_construct_display_start + 4, 54])
+        construct_display_x = game_state.screen.get_width() / 2 - center_offset
+        construct_display_y = 10
+        game_state.screen.blit(selected_construct_stamp, [construct_display_x, construct_display_y])
+        construct_display_y += 3
+        for each_resource, each_value in selected_construct.raw_resources.items():
+            if each_value > 0:
+                construct_display_y += 11
+                resource_stamp = tiny_font.render("{0}: {1}".format(each_resource, str(each_value)), True, utilities.colors.white)
+                game_state.screen.blit(resource_stamp, [construct_display_x, construct_display_y])
+
+
+def print_activate_menu(game_state):
+    activate_margin = game_state.screen.get_height() - 80
+    activate_stamp = tiny_font.render("Toggle Active / Deactive on left click: ", True, utilities.colors.white)
+    game_state.screen.blit(activate_stamp, [10, activate_margin])
 
 
 def print_stat_graph(game_state):
@@ -62,7 +67,7 @@ def print_stat_graph(game_state):
         game_state.screen.blit(red_dot, [step,
                                          math.floor(game_state.screen.get_height() - game_state.stats.resources["Food"][step] / 2)])
         game_state.screen.blit(green_dot, [step,
-                                           math.floor(game_state.screen.get_height() - game_state.stats.resources["Wood"][step] / 2)])
+                                           math.floor(game_state.screen.get_height() - game_state.stats.resources["Wood"][step] / 5)])
         game_state.screen.blit(blue_dot, [step,
                                           game_state.screen.get_height() - game_state.stats.resources["Labor"][step]])
         game_state.screen.blit(white_dot, [step,
@@ -77,12 +82,19 @@ def print_stat_graph(game_state):
 
 
 def print_build_menu(game_state):
-    build_stamp_margin = game_state.screen.get_height() - 40
+    build_stamp_margin = game_state.screen.get_height() - 80
     build_stamp = tiny_font.render("Build:", True, utilities.colors.white)
     game_state.screen.blit(build_stamp, [10, build_stamp_margin])
     if game_state.build_candidate:
         candidate_stamp = tiny_font.render(game_state.build_candidate, True, utilities.colors.white)
-        game_state.screen.blit(candidate_stamp, [10, build_stamp_margin + 11])
+        game_state.screen.blit(candidate_stamp, [40, build_stamp_margin])
+        build_stamp_margin += 15
+        game_state.screen.blit(tiny_font.render("Cost:", True, utilities.colors.white),
+                               [10, build_stamp_margin])
+        for each_resource, each_value in state.build_dict[game_state.build_candidate].cost.items():
+            game_state.screen.blit(tiny_font.render("{0}: {1}".format(each_resource, each_value), True, utilities.colors.white),
+                                   [40, build_stamp_margin])
+            build_stamp_margin += 11
 
 
 def print_build_line(game_state, selected_tile, background_left, background_top, background_x_middle):
@@ -98,7 +110,7 @@ def print_build_line(game_state, selected_tile, background_left, background_top,
 
 
 def print_remove(game_state):
-    remove_margin = game_state.screen.get_height() - 40
+    remove_margin = game_state.screen.get_height() - 80
     remove_stamp = tiny_font.render("Remove: ", True, utilities.colors.white)
     game_state.screen.blit(remove_stamp, [10, remove_margin])
 
@@ -142,4 +154,6 @@ def update_display(game_state, selected_tile, background_left, background_top, b
         print_build_line(game_state, selected_tile, background_left, background_top, background_x_middle)
     if game_state.remove:
         print_remove(game_state)
+    if game_state.activation_mode:
+        print_activate_menu(game_state)
     pygame.display.flip()

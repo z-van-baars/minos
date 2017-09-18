@@ -47,6 +47,7 @@ class GameState(object):
 
         self.active_map = None
         self.remove = False
+        self.activation_mode = False
         self.build_menu = False
         self.build_candidate = "None"
         self.selected_construct = None
@@ -72,7 +73,8 @@ class GameState(object):
 
     def aura_bonuses(self, active_map):
         for building in active_map.buildings:
-            building.aura_bonus(active_map)
+            if building.active:
+                building.aura_bonus(active_map)
 
     def unit_production(self, active_map, last_step_consumed_resources, last_step_produced_resources):
         for building in active_map.buildings:
