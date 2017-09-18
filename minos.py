@@ -55,6 +55,7 @@ def do_nothing(game_state):
 def a_key(game_state):
     game_state.build_mode = False
     game_state.remove = False
+    game_state.build_menu = False
     game_state.activation_mode = not game_state.activation_mode
 
 
@@ -64,6 +65,11 @@ def b_key(game_state):
     game_state.build_candidate = "None"
     game_state.build_candidate = "House"
     game_state.build_menu = not game_state.build_menu
+
+
+def c_key(game_state):
+    if game_state.build_menu:
+        game_state.build_candidate = "Copper Mine"
 
 
 def d_key(game_state):
@@ -114,6 +120,7 @@ def t_key(game_state):
 
 def r_key(game_state):
     game_state.remove = not game_state.remove
+    game_state.activation_mode = False
     game_state.build_menu = False
 
 
@@ -157,6 +164,7 @@ key_functions = {pygame.K_UP: up_key,
                  pygame.K_RCTRL: control_key,
                  pygame.K_a: a_key,
                  pygame.K_b: b_key,
+                 pygame.K_c: c_key,
                  pygame.K_d: d_key,
                  pygame.K_f: f_key,
                  pygame.K_g: g_key,

@@ -6,6 +6,7 @@ import utilities
 build_list = ["Palace",
               "Lumber Camp",
               "Stone Mine",
+              "Copper Mine",
               "House",
               "Temple",
               "Farm"]
@@ -14,6 +15,7 @@ build_dict = {"Palace": construct.Palace,
               "House": construct.House,
               "Lumber Camp": construct.LumberCamp,
               "Stone Mine": construct.StoneMine,
+              "Copper Mine": construct.CopperMine,
               "Temple": construct.Temple,
               "Farm": construct.Farm}
 
@@ -32,6 +34,7 @@ class GameState(object):
         self.palace = None
         self.resources = {"Wood": 10250,
                           "Food": 100,
+                          "Copper": 0,
                           "Stone": 5000,
                           "Labor": 1100}
         self.last_step_consumed_resources = {"Wood": 0,

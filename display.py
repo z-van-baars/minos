@@ -22,6 +22,10 @@ def print_stats(game_state, selected_construct):
                                                                      str(math.floor(game_state.last_step_consumed_resources["Stone"])),
                                                                      str(math.floor(game_state.last_step_produced_resources["Stone"]))),
                                    True, utilities.colors.white)
+    copper_stamp = tiny_font.render("Copper: {0} (-{1}) (+{2})".format(str(math.floor(game_state.resources["Copper"])),
+                                                                       str(math.floor(game_state.last_step_consumed_resources["Copper"])),
+                                                                       str(math.floor(game_state.last_step_produced_resources["Copper"]))),
+                                    True, utilities.colors.white)
     labor_stamp = tiny_font.render("Labor: {0} (-{1}) (+{2})".format(str(math.floor(game_state.resources["Labor"])),
                                                                      str(math.floor(game_state.last_step_consumed_resources["Labor"])),
                                                                      str(math.floor(game_state.last_step_produced_resources["Labor"]))),
@@ -29,14 +33,20 @@ def print_stats(game_state, selected_construct):
     game_state.screen.blit(wood_stamp, [10, 10])
     game_state.screen.blit(food_stamp, [10, 21])
     game_state.screen.blit(stone_stamp, [10, 32])
-    game_state.screen.blit(labor_stamp, [10, 43])
+    game_state.screen.blit(copper_stamp, [10, 43])
+    game_state.screen.blit(labor_stamp, [10, 54])
     if selected_construct:
         selected_construct_stamp = small_font.render("{0}".format(selected_construct.display_name), True, utilities.colors.white)
         center_offset = selected_construct_stamp.get_width() / 2
         construct_display_x = game_state.screen.get_width() / 2 - center_offset
         construct_display_y = 10
         game_state.screen.blit(selected_construct_stamp, [construct_display_x, construct_display_y])
-        construct_display_y += 3
+        construct_display_y += 14
+        if selected_construct.active:
+            active_state = "Active"
+        else:
+            active_state = "Inactive"
+        game_state.screen.blit(tiny_font.render(active_state, True, utilities.colors.white), [construct_display_x, construct_display_y])
         for each_resource, each_value in selected_construct.raw_resources.items():
             if each_value > 0:
                 construct_display_y += 11
@@ -100,10 +110,17 @@ def print_build_menu(game_state):
 def print_build_line(game_state, selected_tile, background_left, background_top, background_x_middle):
     if not game_state.palace:
         return
+    line_length = math.ceil(utilities.distance(game_state.palace.tile_x,
+                                               game_state.palace.tile_y,
+                                               selected_tile.column,
+                                               selected_tile.row))
+    line_color = utilities.colors.red
+    if line_length < game_state.palace.radius + game_state.palace.radius_bonus:
+        line_color = utilities.colors.light_green
     point_a = utilities.get_screen_coords(game_state.palace.tile_x, game_state.palace.tile_y)
     point_b = utilities.get_screen_coords(selected_tile.column, selected_tile.row)
     pygame.draw.line(game_state.screen,
-                     utilities.colors.light_green,
+                     line_color,
                      (point_a[0] + background_x_middle + 20, point_a[1] + background_top + 7),
                      (point_b[0] + background_x_middle + 20, point_b[1] + background_top + 7),
                      2)

@@ -165,6 +165,42 @@ class StoneMine(Construct):
         return consumed_resources, produced_resources
 
 
+class CopperMine(Construct):
+    cost = {"Wood": 100,
+            "Stone": 50,
+            "Labor": 5}
+    display_name = "Stone Mine"
+    radius = 4
+
+    def __init__(self, x, y, active_map):
+        super().__init__(x, y, active_map)
+        self.set_image()
+
+    def set_image(self):
+        self.sprite.image = art.copper_mine_image_1
+        self.sprite.image = self.sprite.image.convert_alpha()
+
+    def produce(self, active_map, resources):
+        consumed_resources = {}
+        produced_resources = {}
+        if resources["Labor"] < 1 * self.consumption_modifier or not self.active:
+            return consumed_resources, produced_resources
+        consumed_resources["Labor"] = 0
+        produced_resources["Copper"] = 0
+        for tile in self.orbit:
+            if tile.construct and tile.construct.raw_resources["Copper"] > 0:
+                extracted_copper = min(1 * self.production_modifier, tile.construct.raw_resources["Copper"])
+                tile.construct.raw_resources["Copper"] -= extracted_copper
+                if extracted_copper > 0:
+                    consumed_resources["Labor"] = min(5, consumed_resources["Labor"] + 1 * self.consumption_modifier)
+                produced_resources["Copper"] += extracted_copper
+                if resources["Labor"] < 1 * self.consumption_modifier:
+                    self.reset_modifiers()
+                    return consumed_resources, produced_resources
+        self.reset_modifiers()
+        return consumed_resources, produced_resources
+
+
 class Temple(Construct):
     cost = {"Wood": 200,
             "Stone": 100,
