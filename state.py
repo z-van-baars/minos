@@ -1,11 +1,11 @@
 import pygame
 import construct
-import pickle
 import utilities
 
 
 build_list = ["Palace",
               "Lumber Camp",
+              "Stone Mine",
               "House",
               "Temple",
               "Farm"]
@@ -13,6 +13,7 @@ build_list = ["Palace",
 build_dict = {"Palace": construct.Palace,
               "House": construct.House,
               "Lumber Camp": construct.LumberCamp,
+              "Stone Mine": construct.StoneMine,
               "Temple": construct.Temple,
               "Farm": construct.Farm}
 

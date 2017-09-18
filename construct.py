@@ -98,8 +98,7 @@ class Farm(Construct):
 
 
 class LumberCamp(Construct):
-    cost = {"Wood": 0,
-            "Labor": 2}
+    cost = {"Labor": 5}
     display_name = "Lumber Camp"
     radius = 4
 
@@ -125,6 +124,41 @@ class LumberCamp(Construct):
         if total_extracted_wood > 0:
             consumed_resources["Labor"] = 1 * self.consumption_modifier
         produced_resources["Wood"] = total_extracted_wood
+        self.reset_modifiers()
+        return consumed_resources, produced_resources
+
+
+class StoneMine(Construct):
+    cost = {"Wood": 100,
+            "Labor": 5}
+    display_name = "Stone Mine"
+    radius = 4
+
+    def __init__(self, x, y, active_map):
+        super().__init__(x, y, active_map)
+        self.set_image()
+
+    def set_image(self):
+        self.sprite.image = art.stone_mine_image_1
+        self.sprite.image = self.sprite.image.convert_alpha()
+
+    def produce(self, active_map, resources):
+        consumed_resources = {}
+        produced_resources = {}
+        if resources["Labor"] < 1 * self.consumption_modifier:
+            return consumed_resources, produced_resources
+        consumed_resources["Labor"] = 0
+        produced_resources["Stone"] = 0
+        for tile in self.orbit:
+            if tile.construct and tile.construct.raw_resources["Stone"] > 0:
+                extracted_stone = min(1 * self.production_modifier, tile.construct.raw_resources["Stone"])
+                tile.construct.raw_resources["Stone"] -= extracted_stone
+                if extracted_stone > 0:
+                    consumed_resources["Labor"] = min(5, consumed_resources["Labor"] + 1 * self.consumption_modifier)
+                produced_resources["Stone"] += extracted_stone
+                if resources["Labor"] < 1 * self.consumption_modifier:
+                    self.reset_modifiers()
+                    return consumed_resources, produced_resources
         self.reset_modifiers()
         return consumed_resources, produced_resources
 

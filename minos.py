@@ -40,6 +40,8 @@ def build(game_state, selected_tile, background_left, background_top, background
 
 
 def remove(game_state, selected_tile):
+    if selected_tile.construct and selected_tile.construct.display_name == "Palace":
+        return
     if selected_tile.construct and selected_tile.construct in game_state.active_map.buildings:
         game_state.active_map.buildings.remove(selected_tile.construct)
         selected_tile.construct = None
@@ -60,6 +62,7 @@ def b_key(game_state):
 def d_key(game_state):
     if not game_state.control:
         return
+    game_state.remove = False
     game_state.build_menu = False
     game_state.buld_candidate = "House"
     game_state.selected_construct = None
@@ -89,6 +92,11 @@ def l_key(game_state):
 def p_key(game_state):
     if game_state.build_menu:
         game_state.build_candidate = "Palace"
+
+
+def s_key(game_state):
+    if game_state.build_menu:
+        game_state.build_candidate = "Stone Mine"
 
 
 def t_key(game_state):
@@ -147,6 +155,7 @@ key_functions = {pygame.K_UP: up_key,
                  pygame.K_l: l_key,
                  pygame.K_p: p_key,
                  pygame.K_r: r_key,
+                 pygame.K_s: s_key,
                  pygame.K_t: t_key}
 
 
