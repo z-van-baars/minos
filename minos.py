@@ -19,7 +19,7 @@ small_font = pygame.font.SysFont('Calibri', 14, True, False)
 
 
 def cost_check(game_state, building):
-    for each_resource, each_value in game_state.resources.items():
+    for each_resource, each_value in building.cost.items():
         if game_state.resources[each_resource] - building.cost[each_resource] < 0:
             return False
     return True
@@ -38,7 +38,7 @@ def build(game_state, selected_tile, background_left, background_top, background
             new_building = state.build_dict[game_state.build_candidate](selected_tile.column, selected_tile.row, game_state.active_map)
             game_state.active_map.buildings.append(new_building)
             game_state.active_map.game_tile_rows[selected_tile.row][selected_tile.column].construct = new_building
-            for each_resource, each_value in game_state.resources.items():
+            for each_resource, each_value in new_building.cost.items():
                 game_state.resources[each_resource] -= new_building.cost[each_resource]
             game_state.active_map.paint_resources()
             game_state.active_map.paint_buildings()

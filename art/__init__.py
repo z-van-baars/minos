@@ -25,8 +25,27 @@ tree_image_1 = pygame.image.load("art/constructs/terrain/tree_1.png").convert()
 tree_image_1.set_colorkey(utilities.colors.key)
 tree_image_1 = tree_image_1.convert_alpha()
 
+copper_pile_image_1 = pygame.image.load("art/constructs/terrain/copper_pile_1.png").convert()
+copper_pile_image_1.set_colorkey(utilities.colors.key)
+copper_pile_image_1 = copper_pile_image_1.convert_alpha()
+
+stone_pile_image_1 = pygame.image.load("art/constructs/terrain/stone_pile_1.png").convert()
+stone_pile_image_1.set_colorkey(utilities.colors.key)
+stone_pile_image_1 = stone_pile_image_1.convert_alpha()
+
 
 # buildings
+copper_mine_image_1 = pygame.image.load("art/constructs/buildings/copper_mine_1.png").convert()
+copper_mine_image_1.set_colorkey(utilities.colors.key)
+copper_mine_image_1 = copper_mine_image_1.convert_alpha()
+
+farm_image_1 = pygame.image.load("art/constructs/buildings/farm_1.png").convert()
+farm_image_2 = pygame.image.load("art/constructs/buildings/farm_2.png").convert()
+farm_image_1.set_colorkey(utilities.colors.key)
+farm_image_2.set_colorkey(utilities.colors.key)
+farm_image_1 = farm_image_1.convert_alpha()
+farm_image_2 = farm_image_2.convert_alpha()
+
 house_image_1 = pygame.image.load("art/constructs/buildings/house_1.png").convert()
 house_image_1.set_colorkey(utilities.colors.key)
 house_image_1 = house_image_1.convert_alpha()
@@ -39,9 +58,15 @@ palace_image_1 = pygame.image.load("art/constructs/buildings/palace_1.png").conv
 palace_image_1.set_colorkey(utilities.colors.key)
 palace_image_1 = palace_image_1.convert_alpha()
 
-farm_image_1 = pygame.image.load("art/constructs/buildings/farm_1.png").convert()
-farm_image_2 = pygame.image.load("art/constructs/buildings/farm_2.png").convert()
-farm_image_1.set_colorkey(utilities.colors.key)
-farm_image_2.set_colorkey(utilities.colors.key)
-farm_image_1 = farm_image_1.convert_alpha()
-farm_image_2 = farm_image_2.convert_alpha()
+road_image_1 = pygame.image.load("art/constructs/buildings/road_1.png").convert()
+road_image_1.set_colorkey(utilities.colors.key)
+road_image_1 = road_image_1.convert_alpha()
+
+
+stone_mine_image_1 = pygame.image.load("art/constructs/buildings/stone_mine_1.png").convert()
+stone_mine_image_1.set_colorkey(utilities.colors.key)
+stone_mine_image_1 = stone_mine_image_1.convert_alpha()
+
+temple_image_1 = pygame.image.load("art/constructs/buildings/temple_1.png").convert()
+temple_image_1.set_colorkey(utilities.colors.key)
+temple_image_1 = temple_image_1.convert_alpha()

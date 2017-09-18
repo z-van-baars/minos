@@ -33,10 +33,12 @@ class GameState(object):
         self.last_step_consumed_resources = {"Wood": 0,
                                              "Food": 0,
                                              "Stone": 0,
+                                             "Copper": 0,
                                              "Labor": 0}
         self.last_step_produced_resources = {"Wood": 0,
                                              "Food": 0,
                                              "Stone": 0,
+                                             "Copper": 0,
                                              "Labor": 0}
 
         self.active_map = None
@@ -70,16 +72,19 @@ class GameState(object):
             if all([terrain_object.raw_resources["Wood"] == 0,
                     terrain_object.raw_resources["Stone"] == 0,
                     terrain_object.raw_resources["Food"] == 0,
+                    terrain_object.raw_resources["Copper"] == 0,
                     terrain_object.raw_resources["Labor"] == 0]):
                 return False
             return True
         last_step_consumed_resources = {"Wood": 0,
                                         "Food": 0,
                                         "Stone": 0,
+                                        "Copper": 0,
                                         "Labor": 0}
         last_step_produced_resources = {"Wood": 0,
                                         "Food": 0,
                                         "Stone": 0,
+                                        "Copper": 0,
                                         "Labor": 0}
 
         if self.timer < self.game_speed:
@@ -115,13 +120,16 @@ class Stats(object):
         self.resources = {"Wood": [],
                           "Food": [],
                           "Stone": [],
+                          "Copper": [],
                           "Labor": []}
         self.consumed_resources = {"Wood": [],
                                    "Food": [],
                                    "Stone": [],
+                                   "Copper": [],
                                    "Labor": []}
         self.produced_resources = {"Wood": [],
                                    "Food": [],
                                    "Stone": [],
+                                   "Copper": [],
                                    "Labor": []}
         self.houses = []

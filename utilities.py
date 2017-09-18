@@ -146,7 +146,7 @@ def get_adjacent_tiles(tile, current_map):
     adjacent_tiles = []
     for tile_y in range(initial_y, initial_y + 3):
         for tile_x in range(initial_x, initial_x + 3):
-            if within_map(tile_x, tile_y, current_map):
+            if within_map(tile_x, tile_y, current_map.game_tile_rows):
                 adjacent_tiles.append(current_map.game_tile_rows[tile_y][tile_x])
     adjacent_tiles.remove(tile)
     return adjacent_tiles
@@ -158,7 +158,7 @@ def get_adjacent_movement_tiles(tile, current_map):
     adjacent_tiles = []
     for tile_y in range(initial_y, initial_y + 3):
         for tile_x in range(initial_x, initial_x + 3):
-            if within_map(tile_x, tile_y, current_map):
+            if within_map(tile_x, tile_y, current_map.game_tile_rows):
                 adjacent_tiles.append(current_map.game_tile_rows[tile_y][tile_x])
     return adjacent_tiles
 

@@ -17,6 +17,7 @@ class Construct(object):
         self.raw_resources = {"Wood": 0,
                               "Food": 0,
                               "Stone": 0,
+                              "Copper": 0,
                               "Labor": 0}
         self.set_orbit(active_map, x, y)
 
@@ -34,9 +35,7 @@ class Construct(object):
 
 
 class House(Construct):
-    cost = {"Wood": 25,
-            "Stone": 0,
-            "Food": 0,
+    cost = {"Wood": 30,
             "Labor": 5}
     display_name = "House"
     radius = 0
@@ -50,25 +49,17 @@ class House(Construct):
         self.sprite.image = self.sprite.image.convert_alpha()
 
     def produce(self, active_map, resources):
-        consumed_resources = {"Wood": 0,
-                              "Food": 0,
-                              "Stone": 0,
-                              "Labor": 0}
-        produced_resources = {"Wood": 0,
-                              "Food": 0,
-                              "Stone": 0,
-                              "Labor": 0}
+        consumed_resources = {}
+        produced_resources = {}
         if resources["Food"] < 5:
             return consumed_resources, produced_resources
-        consumed_resources["Food"] += 5
-        produced_resources["Labor"] += 1
+        consumed_resources["Food"] = 5
+        produced_resources["Labor"] = 1
         return consumed_resources, produced_resources
 
 
 class Farm(Construct):
-    cost = {"Wood": 10,
-            "Stone": 0,
-            "Food": 0,
+    cost = {"Wood": 30,
             "Labor": 2}
     display_name = "Farm"
     radius = 0
@@ -82,26 +73,17 @@ class Farm(Construct):
         self.sprite.image = self.sprite.image.convert_alpha()
 
     def produce(self, active_map, resources):
-        consumed_resources = {"Wood": 0,
-                              "Food": 0,
-                              "Stone": 0,
-                              "Labor": 0}
-        produced_resources = {"Wood": 0,
-                              "Food": 0,
-                              "Stone": 0,
-                              "Labor": 0}
+        consumed_resources = {}
+        produced_resources = {}
         if resources["Labor"] < 1 or resources["Wood"] < 1:
             return consumed_resources, produced_resources
-        consumed_resources["Labor"] += 1
-        consumed_resources["Wood"] += 1
-        produced_resources["Food"] += 6
+        consumed_resources["Labor"] = 1
+        produced_resources["Food"] = 6
         return consumed_resources, produced_resources
 
 
 class LumberCamp(Construct):
-    cost = {"Wood": 10,
-            "Stone": 0,
-            "Food": 0,
+    cost = {"Wood": 25,
             "Labor": 2}
     display_name = "Lumber Camp"
     radius = 4
@@ -115,14 +97,8 @@ class LumberCamp(Construct):
         self.sprite.image = self.sprite.image.convert_alpha()
 
     def produce(self, active_map, resources):
-        consumed_resources = {"Wood": 0,
-                              "Food": 0,
-                              "Stone": 0,
-                              "Labor": 0}
-        produced_resources = {"Wood": 0,
-                              "Food": 0,
-                              "Stone": 0,
-                              "Labor": 0}
+        consumed_resources = {}
+        produced_resources = {}
         if resources["Labor"] < 1:
             return consumed_resources, produced_resources
         total_extracted_wood = 0
@@ -132,15 +108,14 @@ class LumberCamp(Construct):
                 tile.construct.raw_resources["Wood"] -= extracted_wood
                 total_extracted_wood += extracted_wood
         if total_extracted_wood > 0:
-            consumed_resources["Labor"] += 1
-        produced_resources["Wood"] += total_extracted_wood
+            consumed_resources["Labor"] = 1
+        produced_resources["Wood"] = total_extracted_wood
         return consumed_resources, produced_resources
 
 
 class Palace(Construct):
     cost = {"Wood": 10000,
             "Stone": 5000,
-            "Food": 0,
             "Labor": 1000}
     display_name = "Palace"
     radius = 10
@@ -154,15 +129,37 @@ class Palace(Construct):
         self.sprite.image = self.sprite.image.convert_alpha()
 
     def produce(self, active_map, resources):
-        consumed_resources = {"Wood": 0,
-                              "Food": 0,
-                              "Stone": 0,
-                              "Labor": 0}
-        produced_resources = {"Wood": 0,
-                              "Food": 0,
-                              "Stone": 0,
-                              "Labor": 0}
+        consumed_resources = {}
+        produced_resources = {}
         return consumed_resources, produced_resources
+
+
+class CopperPile(Construct):
+    display_name = "Copper"
+    radius = 0
+
+    def __init__(self, x, y, active_map):
+        super().__init__(x, y, active_map)
+        self.set_image()
+        self.raw_resources["Copper"] = 800
+
+    def set_image(self):
+        self.sprite.image = art.copper_pile_image_1
+        self.sprite.image = self.sprite.image.convert_alpha()
+
+
+class StonePile(Construct):
+    display_name = "Stone"
+    radius = 0
+
+    def __init__(self, x, y, active_map):
+        super().__init__(x, y, active_map)
+        self.set_image()
+        self.raw_resources["Stone"] = 1000
+
+    def set_image(self):
+        self.sprite.image = art.stone_pile_image_1
+        self.sprite.image = self.sprite.image.convert_alpha()
 
 
 class Tree(Construct):
@@ -172,7 +169,7 @@ class Tree(Construct):
     def __init__(self, x, y, active_map):
         super().__init__(x, y, active_map)
         self.set_image()
-        self.raw_resources["Wood"] = 100
+        self.raw_resources["Wood"] = 250
 
     def set_image(self):
         self.sprite.image = art.tree_image_1
