@@ -7,11 +7,13 @@ import utilities
 build_list = ["Palace",
               "Lumber Camp",
               "House",
+              "Temple",
               "Farm"]
 
 build_dict = {"Palace": construct.Palace,
               "House": construct.House,
               "Lumber Camp": construct.LumberCamp,
+              "Temple": construct.Temple,
               "Farm": construct.Farm}
 
 
@@ -26,6 +28,7 @@ class GameState(object):
         self.time = 0
         self.timer = 0
         self.control = False
+        self.palace = None
         self.resources = {"Wood": 10250,
                           "Food": 100,
                           "Stone": 5000,
@@ -65,6 +68,10 @@ class GameState(object):
             self.stats.consumed_resources[each_key].append(each_value)
         for each_key, each_value in self.last_step_produced_resources.items():
             self.stats.produced_resources[each_key].append(each_value)
+
+    def aura_bonuses(self, active_map):
+        for building in active_map.buildings:
+            building.aura_bonus(active_map)
 
     def unit_production(self, active_map, last_step_consumed_resources, last_step_produced_resources):
         for building in active_map.buildings:
@@ -113,6 +120,7 @@ class GameState(object):
         self.timer = 0
         active_map = self.active_map
 
+        self.aura_bonuses(active_map)
         self.unit_production(active_map, last_step_consumed_resources, last_step_produced_resources)
         self.last_step_consumed_resources = last_step_consumed_resources
         self.last_step_produced_resources = last_step_produced_resources

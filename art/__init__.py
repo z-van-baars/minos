@@ -10,6 +10,10 @@ selected_tile_image = pygame.image.load("art/tiles/selected.png").convert()
 selected_tile_image.set_colorkey(utilities.colors.key)
 selected_tile_image = selected_tile_image.convert_alpha()
 
+invalid_tile_image = pygame.image.load("art/tiles/invalid_tile_1.png").convert()
+invalid_tile_image.set_colorkey(utilities.colors.key)
+invalid_tile_image = invalid_tile_image.convert_alpha()
+
 grass_tile_image_1 = pygame.image.load("art/tiles/grass_1.png").convert()
 grass_tile_image_1.set_colorkey(utilities.colors.key)
 grass_tile_image_1 = grass_tile_image_1.convert_alpha()

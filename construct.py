@@ -3,6 +3,8 @@ import art
 import utilities
 import random
 
+# Make constructs remember their choice for multiple choice sprites
+
 
 class Construct(object):
     display_name = "N/A"
@@ -20,6 +22,10 @@ class Construct(object):
                               "Copper": 0,
                               "Labor": 0}
         self.set_orbit(active_map, x, y)
+        self.base_consumption_modifier = 1.0
+        self.consumption_modifier = 1.0
+        self.base_production_modifier = 1.0
+        self.production_modifier = 1.0
 
     def __lt__(self, other):
         return False
@@ -27,15 +33,22 @@ class Construct(object):
     def set_orbit(self, active_map, x, y):
         self.orbit = utilities.get_nearby_tiles(active_map, (x, y), self.radius)
 
+    def reset_modifiers(self):
+        self.consumption_modifier = self.base_consumption_modifier
+        self.production_modifier = self.base_production_modifier
+
     def set_image(self):
         self.sprite.rect = self.sprite.image.get_rect()
+
+    def aura_bonus(self, active_map):
+        pass
 
     def produce(self, active_map, resources):
         pass
 
 
 class House(Construct):
-    cost = {"Wood": 30,
+    cost = {"Wood": 50,
             "Labor": 5}
     display_name = "House"
     radius = 0
@@ -53,8 +66,9 @@ class House(Construct):
         produced_resources = {}
         if resources["Food"] < 5:
             return consumed_resources, produced_resources
-        consumed_resources["Food"] = 5
-        produced_resources["Labor"] = 1
+        consumed_resources["Food"] = 5 * self.consumption_modifier
+        produced_resources["Labor"] = 1 * self.production_modifier
+        self.reset_modifiers()
         return consumed_resources, produced_resources
 
 
@@ -77,13 +91,14 @@ class Farm(Construct):
         produced_resources = {}
         if resources["Labor"] < 1 or resources["Wood"] < 1:
             return consumed_resources, produced_resources
-        consumed_resources["Labor"] = 1
-        produced_resources["Food"] = 6
+        consumed_resources["Labor"] = 1 * self.consumption_modifier
+        produced_resources["Food"] = 6 * self.production_modifier
+        self.reset_modifiers()
         return consumed_resources, produced_resources
 
 
 class LumberCamp(Construct):
-    cost = {"Wood": 25,
+    cost = {"Wood": 0,
             "Labor": 2}
     display_name = "Lumber Camp"
     radius = 4
@@ -104,13 +119,44 @@ class LumberCamp(Construct):
         total_extracted_wood = 0
         for tile in self.orbit:
             if tile.construct and tile.construct.raw_resources["Wood"] > 0:
-                extracted_wood = min(1, tile.construct.raw_resources["Wood"])
+                extracted_wood = min(1 * self.production_modifier, tile.construct.raw_resources["Wood"])
                 tile.construct.raw_resources["Wood"] -= extracted_wood
                 total_extracted_wood += extracted_wood
         if total_extracted_wood > 0:
-            consumed_resources["Labor"] = 1
+            consumed_resources["Labor"] = 1 * self.consumption_modifier
         produced_resources["Wood"] = total_extracted_wood
+        self.reset_modifiers()
         return consumed_resources, produced_resources
+
+
+class Temple(Construct):
+    cost = {"Wood": 200,
+            "Stone": 0,
+            "Labor": 50}
+    display_name = "Temple"
+    radius = 8
+
+    def __init__(self, x, y, active_map):
+        super().__init__(x, y, active_map)
+        self.set_image()
+
+    def set_image(self):
+        self.sprite.image = art.temple_image_1
+        self.sprite.image = self.sprite.image.convert_alpha()
+
+    def produce(self, active_map, resources):
+        consumed_resources = {}
+        produced_resources = {}
+        if resources["Labor"] < 3 * self.consumption_modifier:
+            return consumed_resources, produced_resources
+        consumed_resources["Labor"] = 3 * self.consumption_modifier
+        self.reset_modifiers()
+        return consumed_resources, produced_resources
+
+    def aura_bonus(self, active_map):
+        for tile in self.orbit:
+            if tile.construct and tile.construct.display_name == "House":
+                tile.construct.production_modifier = 1.1
 
 
 class Palace(Construct):
@@ -118,7 +164,7 @@ class Palace(Construct):
             "Stone": 5000,
             "Labor": 1000}
     display_name = "Palace"
-    radius = 10
+    radius = 6
 
     def __init__(self, x, y, active_map):
         super().__init__(x, y, active_map)
@@ -131,7 +177,15 @@ class Palace(Construct):
     def produce(self, active_map, resources):
         consumed_resources = {}
         produced_resources = {}
+        self.reset_modifiers()
         return consumed_resources, produced_resources
+
+    def aura_bonus(self, active_map):
+        for tile in self.orbit:
+            if tile.construct and tile.construct.display_name == "House":
+                tile.construct.consumption_modifier = 0.9
+            if tile.construct and tile.construct.display_name == "Temple":
+                tile.construct.consumption_modifier = 0.66
 
 
 class CopperPile(Construct):
