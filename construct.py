@@ -169,7 +169,7 @@ class CopperMine(Construct):
     cost = {"Wood": 100,
             "Stone": 50,
             "Labor": 5}
-    display_name = "Stone Mine"
+    display_name = "Copper Mine"
     radius = 4
 
     def __init__(self, x, y, active_map):
